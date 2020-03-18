@@ -1,5 +1,5 @@
 # TicTacToe
-Popular TicTacToe or XO game
+Popularna TicTacToe ili XO igra
 
 - matrica od 9 polja
 - 2 igraca (Iks igrac i Oks igrac)
