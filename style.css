@@ -1,0 +1,47 @@
+* {
+    box-sizing: border-box;
+
+}
+h1 {
+    text-align: center;
+}
+.whole-table{
+    margin-top: 50px;
+    margin: auto;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    flex-wrap: wrap;
+}
+.one-field {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+}
+
+.one-field:nth-child(-n+3){
+    border-top: none;
+}
+.one-field:nth-child(n+7){
+    border-bottom: none;
+}
+.one-field:nth-child(3n+3){
+    border-right: none;
+}
+.one-field:nth-child(3n+1){
+    border-left: none;
+}
+.reset-button {
+    display: block;
+    width: 100px;
+    height: 20px;
+    margin: auto;
+    margin-top: 10px;
+    background-color: lightblue;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+}
