@@ -1,43 +1,33 @@
 const nesto = document.querySelectorAll('.one-field'); //sa svim elementima radim
-let kontrolaZaPotez
+let turnCheck;
 
 nesto.forEach(function(element) { // automatski ga pretvara u array
-    element.addEventListener('click', function (){
-    if (!kontrolaZaPotez){
+    element.addEventListener('click',function(){ basicGameLogic(element)}, { once: true} );
+  });
+
+function basicGameLogic(e) {
+    if (!turnCheck){
         let iks = document.createElement('a'); // NE MOZE VAN OVE NAPRAVITI ELEMENT FUNKCIJE INACE CE IH BRISATI SVAKIM KLIKOM
         iks.style.fontSize = "70px";
         iks.style.color = "black";
         iks.innerHTML = "<i class='fa'>&#xf00d;</i>";
-        element.appendChild(iks);
-        element.classList.add('x');
-        kontrolaZaPotez = !kontrolaZaPotez;
+        e.appendChild(iks);
+        e.classList.add('x');
+        turnCheck = !turnCheck;
         }
     else {
         let oks = document.createElement('a'); 
         oks.style.fontSize = "65px";
         oks.style.color = "black";
         oks.innerHTML = "<i class='fa'>&#xf1ce;</i>";
-        element.appendChild(oks);
-        element.classList.add('o');
-        kontrolaZaPotez = !kontrolaZaPotez;
+        e.appendChild(oks);
+        e.classList.add('o');
+        turnCheck = !turnCheck;
         }
-    
-    if(winner1()){ //Provera ko je pobednik, ovde cu dodati kasnije brojace za elemente dole koji ce da upisuju score, kao i local storage
-        console.log('x wins');
-        alert('X wins');
-    }
-    else if (winner2()){
-        console.log('o wins');
-        alert('O wins');
-    }
-    else if (tigh()){
-        console.log('TIGH')
-        alert('It\'s a tigh');
-    }
-    }, { once: true} );
-  });
-  
-const winningCombination = [ // jedine moguce kombinacije
+    functionForWinnerCheck();
+}
+
+const winningCombination = [ // sve moguce kombinacije
 [0, 1, 2],
 [3, 4, 5],
 [6, 7, 8],
@@ -66,6 +56,21 @@ function tigh() { // ako su sva polja ispunjena da bude nereseno
 return [...nesto].every(cell => {
     return cell.classList.contains('x') || cell.classList.contains('o')
     })
+}
+
+function functionForWinnerCheck(){
+    if(winner1()){ //Provera ko je pobednik, ovde cu dodati kasnije brojace za elemente dole koji ce da upisuju score, kao i local storage
+        console.log('x wins');
+        alert('X wins');
+    }
+    else if (winner2()){
+        console.log('o wins');
+        alert('O wins');
+    }
+    else if (tigh()){
+        console.log('TIGH')
+        alert('It\'s a tigh');
+    }
 }
 
 
