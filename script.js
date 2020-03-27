@@ -1,8 +1,25 @@
 const nesto = document.querySelectorAll('.one-field'); //sa svim elementima radim
 let turnCheck;
+let countX = 0;
+const counterForX = document.querySelector('.left-score');
+const LocalStorageObject = {
+    saveItem: function(number) {
+        const objectToString = JSON.stringify(number);
+        localStorage.setItem('left-score', objectToString);
+    },
+    loadItem: function() {
+        const listAsString = localStorage.getItem('left-score');
+        const converted = JSON.parse(listAsString);
+        return converted;
+    }
+};
+let currentScore = LocalStorageObject.loadItem();
+console.log(currentScore)
+counterForX.textContent = currentScore;
 
-nesto.forEach(function(element) { // automatski ga pretvara u array
-    element.addEventListener('click',function(){ basicGameLogic(element)}, { once: true} );
+
+nesto.forEach(function(element) { // automatski ga pretvara u nodelist object
+    element.addEventListener('click', function (){basicGameLogic(element)}, { once: true} );
   });
 
 function basicGameLogic(e) {
@@ -25,8 +42,8 @@ function basicGameLogic(e) {
         turnCheck = !turnCheck;
         }
     functionForWinnerCheck();
+   
 }
-
 const winningCombination = [ // sve moguce kombinacije
 [0, 1, 2],
 [3, 4, 5],
@@ -60,22 +77,34 @@ return [...nesto].every(cell => {
 
 function functionForWinnerCheck(){
     if(winner1()){ //Provera ko je pobednik, ovde cu dodati kasnije brojace za elemente dole koji ce da upisuju score, kao i local storage
-        console.log('x wins');
-        alert('X wins');
+        //console.log('x wins');
+        setTimeout(function() {
+            alert("X wins");
+        },0)
+        currentScore = currentScore + 2;
+        counterForX.textContent = currentScore;
+        LocalStorageObject.saveItem(currentScore);
+        reloadGame();
     }
     else if (winner2()){
-        console.log('o wins');
-        alert('O wins');
+        //console.log('o wins');
+        setTimeout(function() {
+            alert("O wins");
+        },0)
+        reloadGame();
     }
     else if (tigh()){
-        console.log('TIGH')
-        alert('It\'s a tigh');
+        //console.log('TIGH')
+        setTimeout(function() {
+            alert('It\'s a tigh');
+        },0)
+        reloadGame();
     }
 }
-
+function reloadGame (){
+    location.reload(false);
+}
 
 let anchorReset = document.getElementById('reset'); // resetovanje table...jel moze ovako?
-anchorReset.addEventListener('click', function(){
-window.location.reload(false);
-})
+anchorReset.addEventListener('click', reloadGame)
 

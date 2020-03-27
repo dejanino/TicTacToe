@@ -45,3 +45,13 @@ h1 {
     color: white;
     text-decoration: none;
 }
+.left-score{
+    background-color: red;
+    color: white;
+    font-size: 32px;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
