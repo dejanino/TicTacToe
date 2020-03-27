@@ -1,6 +1,6 @@
 const nesto = document.querySelectorAll('.one-field'); //sa svim elementima radim
 let turnCheck;
-let countX = 0;
+let currentScore = 0;
 const counterForX = document.querySelector('.left-score');
 const LocalStorageObject = {
     saveItem: function(number) {
@@ -13,9 +13,13 @@ const LocalStorageObject = {
         return converted;
     }
 };
-let currentScore = LocalStorageObject.loadItem();
-console.log(currentScore)
-counterForX.textContent = currentScore;
+
+currentScore = LocalStorageObject.loadItem();
+if(currentScore){
+counterForX.textContent = currentScore;}
+else {
+counterForX.textContent = 0;
+}
 
 
 nesto.forEach(function(element) { // automatski ga pretvara u nodelist object
