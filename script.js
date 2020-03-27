@@ -1,26 +1,48 @@
 const nesto = document.querySelectorAll('.one-field'); //sa svim elementima radim
 let turnCheck;
-let currentScore = 0;
+
 const counterForX = document.querySelector('.left-score');
+const counterForO = document.querySelector('.right-score');
 const LocalStorageObject = {
     saveItem: function(number) {
         const objectToString = JSON.stringify(number);
         localStorage.setItem('left-score', objectToString);
     },
+    saveItem2: function(number) {
+        const objectToString2 = JSON.stringify(number);
+        localStorage.setItem('right-score', objectToString2);
+    },
     loadItem: function() {
         const listAsString = localStorage.getItem('left-score');
         const converted = JSON.parse(listAsString);
+        return converted;
+    },
+    loadItem2: function() {
+        const listAsString2 = localStorage.getItem('right-score');
+        const converted = JSON.parse(listAsString2);
         return converted;
     }
 };
 
 currentScore = LocalStorageObject.loadItem();
-if(currentScore){
-counterForX.textContent = currentScore;}
-else {
-counterForX.textContent = 0;
-}
+currentScore2 = LocalStorageObject.loadItem2();
 
+if(!currentScore){
+    counterForO.textContent = 0;
+    counterForX.textContent = 0;
+}
+else if (currentScore && !currentScore2){
+counterForX.textContent = currentScore;
+counterForO.textContent = 0;
+}
+else if (!currentScore && currentScore2){
+    counterForX.textContent = 0;
+    counterForO.textContent = currentScore2;
+}
+else {
+    counterForX.textContent = currentScore;
+    counterForO.textContent = currentScore2;
+}
 
 nesto.forEach(function(element) { // automatski ga pretvara u nodelist object
     element.addEventListener('click', function (){basicGameLogic(element)}, { once: true} );
@@ -95,6 +117,9 @@ function functionForWinnerCheck(){
         setTimeout(function() {
             alert("O wins");
         },0)
+        currentScore2 = currentScore2 + 2;
+        counterForO.textContent = currentScore2;
+        LocalStorageObject.saveItem2(currentScore2);
         reloadGame();
     }
     else if (tigh()){
@@ -112,3 +137,8 @@ function reloadGame (){
 let anchorReset = document.getElementById('reset'); // resetovanje table...jel moze ovako?
 anchorReset.addEventListener('click', reloadGame)
 
+let clearLocalStorage = document.querySelector('.clear-storage')
+clearLocalStorage.addEventListener('click', function(){
+    localStorage.clear();
+    reloadGame();
+})
