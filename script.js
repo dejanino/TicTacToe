@@ -127,6 +127,12 @@ function functionForWinnerCheck(){
         setTimeout(function() {
             alert('It\'s a tigh');
         },0)
+        currentScore2 = currentScore2 + 1;
+        currentScore = currentScore + 1;
+        counterForX.textContent = currentScore;
+        counterForO.textContent = currentScore2;
+        LocalStorageObject.saveItem(currentScore);
+        LocalStorageObject.saveItem2(currentScore2);
         reloadGame();
     }
 }
