@@ -1,25 +1,25 @@
-const nesto = document.querySelectorAll('.one-field'); //sa svim elementima radim
+const oneField = document.querySelectorAll('.one-field'); //sa svim elementima radim
 let turnCheck;
 
 const counterForX = document.querySelector('.left-score');
 const counterForO = document.querySelector('.right-score');
 const LocalStorageObject = {
     saveItem: function(number) {
-        const objectToString = JSON.stringify(number);
-        localStorage.setItem('left-score', objectToString);
+        const numberToString = JSON.stringify(number);
+        localStorage.setItem('left-score', numberToString);
     },
     saveItem2: function(number) {
-        const objectToString2 = JSON.stringify(number);
-        localStorage.setItem('right-score', objectToString2);
+        const numberToString2 = JSON.stringify(number);
+        localStorage.setItem('right-score', numberToString2);
     },
     loadItem: function() {
-        const listAsString = localStorage.getItem('left-score');
-        const converted = JSON.parse(listAsString);
+        const numberAsString = localStorage.getItem('left-score');
+        const converted = JSON.parse(numberAsString);
         return converted;
     },
     loadItem2: function() {
-        const listAsString2 = localStorage.getItem('right-score');
-        const converted = JSON.parse(listAsString2);
+        const numberAsString2 = localStorage.getItem('right-score');
+        const converted = JSON.parse(numberAsString2);
         return converted;
     }
 };
@@ -27,7 +27,7 @@ const LocalStorageObject = {
 currentScore = LocalStorageObject.loadItem();
 currentScore2 = LocalStorageObject.loadItem2();
 
-if(!currentScore){
+if(!currentScore && !currentScore2){
     counterForO.textContent = 0;
     counterForX.textContent = 0;
 }
@@ -44,7 +44,7 @@ else {
     counterForO.textContent = currentScore2;
 }
 
-nesto.forEach(function(element) { // automatski ga pretvara u nodelist object
+oneField.forEach(function(element) { // automatski ga pretvara u nodelist object
     element.addEventListener('click', function (){basicGameLogic(element)}, { once: true} );
   });
 
@@ -67,10 +67,9 @@ function basicGameLogic(e) {
         e.classList.add('o');
         turnCheck = !turnCheck;
         }
-    functionForWinnerCheck();
-   
+    functionForWinnerCheck();  
 }
-const winningCombination = [ // sve moguce kombinacije
+const winningCombination = [ // sve moguce win kombinacije
 [0, 1, 2],
 [3, 4, 5],
 [6, 7, 8],
@@ -84,32 +83,32 @@ const winningCombination = [ // sve moguce kombinacije
 function winner1() { //provera za x
 return winningCombination.some(combination => {
     return combination.every(index => {
-    return nesto[index].classList.contains('x')
+    return oneField[index].classList.contains('x')
     })
 })
 }
 function winner2() { // provera za o
 return winningCombination.some(combination1 => {
     return combination1.every(index1 => {
-    return nesto[index1].classList.contains('o')
+    return oneField[index1].classList.contains('o')
     })
 })
 }
 function tigh() { // ako su sva polja ispunjena da bude nereseno
-return [...nesto].every(cell => {
+return [...oneField].every(cell => {
     return cell.classList.contains('x') || cell.classList.contains('o')
     })
 }
 
 function functionForWinnerCheck(){
-    if(winner1()){ //Provera ko je pobednik, ovde cu dodati kasnije brojace za elemente dole koji ce da upisuju score, kao i local storage
+    if(winner1()){ 
         //console.log('x wins');
         setTimeout(function() {
             alert("X wins");
         },0)
         currentScore = currentScore + 2;
         counterForX.textContent = currentScore;
-        LocalStorageObject.saveItem(currentScore);
+        LocalStorageObject.saveItem(currentScore); //using local storage to save score, coudve used season but nvm
         reloadGame();
     }
     else if (winner2()){
