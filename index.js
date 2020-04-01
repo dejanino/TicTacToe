@@ -1,3 +1,6 @@
+import { LocalStorageObject } from 'LocalStorageModule.js';
+import { LocalStorageObjectSecond } from 'LocalStorageModule.js';
+ 
 window.addEventListener('load', app);
 
 let gameBoard = ['', '', '', '', '', '', '', '', '']; 
