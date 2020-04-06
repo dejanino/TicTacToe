@@ -1,299 +1,195 @@
-// import { LocalStorageObject } from 'LocalStorageModule.js';
-// import { LocalStorageObjectSecond } from 'LocalStorageModule.js';
- 
-window.addEventListener('load', app);
+let main = function (){
 
-let gameBoard = ['', '', '', '', '', '', '', '', '']; 
-let turn = 0; // Keeps track if X or O player's turn
-let winner = false;
- 
-// CREATE PLAYER
-const player = (name) => {
-  name = name;
-  return {name};
- };
-
- let playerX = player("");
- let playerY = player("");
-
- // INITIALIZE APP
-function app() {
-  let inputField = document.querySelector('.input-field').focus();
-
-  const addPlayerForm = document.getElementById('player-form');
-  addPlayerForm.addEventListener('submit', addPlayers);
-
-  let replayButton = document.querySelector('.replay-btn');
-  replayButton.addEventListener('click', resetBoard);
-}
-
-// Add PLAYERS
-function addPlayers(event) {
-  event.preventDefault();
-
-  let list = LocalStorageObject.loadResult();
-
-  if (this.player1.value === '' || this.player2.value === '') {
-    alert('You Must Enter a Name for Each Field');
-    return;
-  }
-
-  const playerFormContainer = document.querySelector('.enter-players');
-  const boardMain = document.querySelector('.board__main');
-  playerFormContainer.classList.add('hide-container');
-  boardMain.classList.remove('hide-container');
-
-  playerX.name = this.player1.value;
-  playerY.name = this.player2.value;
-
-  //pozovi funkciju za snimanje igraca 
-  LocalStorageObject.savePlayers(playerX.name, playerY.name);
-
-  buildBoard();
-
-}
-
-
-// RETURN CURRENT PLAYER
-function currentPlayer() {
-  return turn % 2 === 0 ? 'X' : 'O';
-}
-
-// Resize squares in event browser is resized
-window.addEventListener("resize", onResize);
-function onResize() {
-  let allCells = document.querySelectorAll('.board__cell');
-  let cellHeight = allCells[0].offsetWidth;
-  
-  allCells.forEach( cell => {
-    cell.style.height = `${cellHeight}px`;
-  });
-}
-
-// Build Board
-function buildBoard() {
-  let resetContainer = document.querySelector('.reset');
-  resetContainer.classList.remove('reset--hidden');
-
-  onResize();
-  addCellClickListener();
-  changeBoardHeaderNames();
-
-  //pozovi funkciju koja ce da popuni tablu sa rezultatom
-  LocalStorageObject.populateResultBoard();
-}
-
-// CELL CLICK EVENT FOR PLAYER TO ATTEMPT TO MAKE MOVE
-function makeMove(event) {
-  console.log(turn);
-  
-  let currentCell = parseInt(event.currentTarget.firstElementChild.dataset.id);
-  let cellToAddToken = document.querySelector(`[data-id='${currentCell}']`);
-  
-  if (cellToAddToken.innerHTML !== '') {
-    console.log('This cell is already taken.');
-    return;
-  } else {
-    if (currentPlayer() === 'X') {
-      cellToAddToken.textContent = currentPlayer();
-      gameBoard[currentCell] = 'X';
-    } else {
-      cellToAddToken.textContent = currentPlayer();
-      gameBoard[currentCell] = 'O';
-    }
-  }
-
-
-
-
-  // CHECK IF WE HAVE A WINNER
-  isWinner();
+    var columns = document.getElementsByTagName('td');//promenljiva koja sadrzi sva polja matrice
+    console.log(columns);
+    let playerTurn = document.querySelector('.player-turn');//promenljiva koja ukazuje na redosled igraca
+    var button = document.querySelector('.reset-button');//dugme za reset
     
-  // Update turn count so next player can choose
-  turn ++;
-
-  // CHANGE BOARD HEADER INFO
-  changeBoardHeaderNames();
-}
-
-function checkIfTie() {
-  if (turn > 7) {
-    alert('game over a tie')
-  }
-}
-
-function isWinner() {
-  const winningSequences = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
-
-  winningSequences.forEach( winningCombos => {
-    let cell1 = winningCombos[0];
-    let cell2 = winningCombos[1];
-    let cell3 = winningCombos[2];
-    if (
-      gameBoard[cell1] === currentPlayer() &&
-      gameBoard[cell2] === currentPlayer() &&
-      gameBoard[cell3] === currentPlayer()
-    ) {
-
-      
-      const cells = document.querySelectorAll('.board__cell');
-      let letterId1 = document.querySelector(`[data-id='${cell1}']`);
-      let letterId2 = document.querySelector(`[data-id='${cell2}']`);
-      let letterId3 = document.querySelector(`[data-id='${cell3}']`);
-      
-      cells.forEach( cell => {
-        let cellId = cell.firstElementChild.dataset.id;	
-
-        if (cellId == cell1 || cellId == cell2 || cellId == cell3 ) {
-          cell.classList.add('board__cell--winner');
-        }
-      });
-
-      let currentPlayerText = document.querySelector('.board___player-turn');
-      if (currentPlayer() === 'X') {
-        currentPlayerText.innerHTML = `
-          <div class="congratulations">Congratulations ${playerX.name}</div>
-          <div class="u-r-winner">You are our winner!</div>
-        `;
-        winner = true;
-
-        //ove zovemo funkciju koja ce da sacuva rezultat u local storage
-        // saljemo joj parametar/index za playerX, a to je 0
-        LocalStorageObject.saveResult(0)
-        
-        removeCellClickListener();
-      } else {
-        currentPlayerText.innerHTML = `
-          <div class="congratulations">Congratulations ${playerY.name}</div>
-          <div class="u-r-winner">You are our winner!</div>
-        `;
-        winner = true;
-
-        //ove zovemo funkciju koja ce da sacuva rezultat u local storage
-        // saljemo joj parametar/index za playerY, a to je 1
-        LocalStorageObject.saveResult(1)
-        
-        removeCellClickListener();
-      }
-      // ucitavamo trenutni rezultat
-      LocalStorageObject.populateResultBoard();
-    }
-  });
-
-  if (!winner) {
-    checkIfTie();
-  }
-  
-  return false;
-}
-
-function changeBoardHeaderNames() {
-  if (!winner) {
-    let currentPlayerText = document.querySelector('.board___player-turn');
-    if (currentPlayer() === 'X') {
-      currentPlayerText.innerHTML = `
-        <span class="name--style">${playerX.name}</span>, you are up!
-        <div class="u-r-winner"></div>
-      `
-    }  else {
-      currentPlayerText.innerHTML = `
-        <span class="name--style">${playerY.name}</span>, you are up.
-        <div class="u-r-winner"></div>
-      `
-    }
-  }
-}
-
-function resetBoard() {
-  console.log('resetting');
-  
-  gameBoard = ['', '', '', '', '', '', '', '', '']; 
-  
-  let cellToAddToken = document.querySelectorAll('.letter');
-  cellToAddToken.forEach( square => {
-    square.textContent = '';
-    square.parentElement.classList.remove('board__cell--winner');
-  });
-
-  turn = 0;
-  winner = false;
-
-  let currentPlayerText = document.querySelector('.board___player-turn');
-  currentPlayerText.innerHTML = `
-    <span class="name--style">${playerX.name}</span>, you are up!
-    <div class="u-r-winner"></div>
-  `
-
-  addCellClickListener();
-}
-
-function addCellClickListener() {
-  const cells = document.querySelectorAll('.board__cell');
-  cells.forEach( cell => {
-    cell.addEventListener('click', makeMove);
-  });
-}
-
-function removeCellClickListener() {
-  let allCells = document.querySelectorAll('.board__cell');
-  allCells.forEach( cell => {
-    cell.removeEventListener('click', makeMove);
-  });
-}
-
-const LocalStorageObject = {
-  // ovde cuvamo imena igraca i stavljamo im po 0 poena za pocetak
-  savePlayers: function(playerX, playerY) {
-    const list = [
-      {
-        name: playerX,
-        points: 0
-      },
-      {
-        name: playerY,
-        points: 0
-      }
+    let currentPlayer = 0; // promenljiva koja ukazuje na trenutnog igraca
+    let playerId;//promenljiva koja ukazuje na Id igraca
+    let winner = false ;//promenljiva koja ukazuje na pobednika
+    let drawResult = false;
+    let playerMoves = [];//promenljiva koja ukazuje na korake igraca
+    let player1Points = 0;//poeni igraca 1
+    let player2Points = 0;//poeni igraca 2
+    let winnerCombination = [];//promenljiva koja ukazuje na pobednicku kombinaciju
+    
+    //pocetne vrednosti svih polja
+    let beginningStatus = [
+        "", "", "",
+        "", "", "",
+        "", "", ""
     ]
-    const objectToString = JSON.stringify(list);
-    localStorage.setItem('list', objectToString);
-  },
-  saveResult: function(index) {
-    // prvo ucitamo postojecu listu
-    let list = this.loadResult();
+    //pobednicke kombinacije
+    const winningCombinations = [
+        [0,1,2],
+        [3,4,5],
+        [6,7,8],
+        [0,3,6],
+        [1,4,7],
+        [2,5,8],
+        [0,4,8],
+        [2,4,6]
+    ]
+   
+       
+    var beginningOfThePlay = function (event){ //koristim event koji se izbacuje nakon klika na odgovaracuje polje
+                
+        //prvi igrac
+        if(currentPlayer === 0)
+        {
+            playerMoves = playersActions('X','X','X',1,"It is O's turn");            
+        }
+        //drugi igrac
+        else
+        {
+            playerMoves = playersActions('O','O','O',0,"It is X's turn")
+        }
 
-    //nadjemo odgovarajuceg takmicara koji je pobedio preko indeksa
-    // i povecamo mu broj pobeda za 1
-    list[index].points += 1
+         checkResult(beginningStatus);
+         
+        
+    }
 
-    //pa onda to novo stanje snimimo
-    const objectToString = JSON.stringify(list);
-    localStorage.setItem('list', objectToString);
-  },
-  loadResult: function() {
-      const listAsString = localStorage.getItem('list');
-      const converted = JSON.parse(listAsString);
-      return converted;
-  },
-  populateResultBoard: function() {
-    let list = this.loadResult();
+     //za svako polje iz tabele prikacujemo click event
+     for(var i=0; i < columns.length; i++){
+        columns[i].addEventListener('click',beginningOfThePlay);
+        }
+       
+
     
-    let playerXname = document.getElementById("playerXname");
-    let playerXpoints = document.getElementById("playerXpoints");
-    let playerYname = document.getElementById("playerYname");
-    let playerYpoints = document.getElementById("playerYpoints");
+    let playersActions = function (elementText,text,id,number,string){
 
-    playerXname.innerText = list[0].name;
-    playerXpoints.innerText = list[0].points;
-    playerYname.innerText = list[1].name;
-    playerYpoints.innerText = list[1].points;
-  }
+        let element = event.toElement;//promenljiva koja ukazuje na polje koje je igrac kliknuo
+        element.textContent = elementText;//unismo X ili O u polje koje je igrac izabrao
+        beginningStatus[element.id] = text;//stavljamo X ili O na odgovarajucu poziciju u indeksu
+        console.log(beginningStatus);
+        element.removeEventListener('click',beginningOfThePlay);//za izbrano polje skidamo click event
+        playerId = id;//odredjujemo koji igrac je igrao
+        currentPlayer = number;           //omogucavamo da na red dodje drugi igrac
+        playerTurn.textContent = string; //oznacavamo koji igrac je na redu       
+        
+       
+        return beginningStatus;// f-ja vraca niz sa odgovarajucim X ili O u nizu
+
+    }
+
+    
+    
+    let checkResult = function (beginningStatus){
+        drawResult = !beginningStatus.includes('');
+        
+        //proveravamo da li u winning combination imamo podatke za X ili O
+        for(var i=0; i < winningCombinations.length; i++){
+             winnerCombination = winningCombinations[i];
+
+            let firstField = beginningStatus[winnerCombination[0]];
+            let secondField = beginningStatus[winnerCombination[1]];
+            let thirdFiled = beginningStatus[winnerCombination[2]];
+            //uslov za pobedu
+            if (firstField !== '' && firstField === secondField  && secondField === thirdFiled ){
+                winner = true;
+                removeEventListener();
+                break;
+            }else {
+                continue;
+            }
+        }
+
+        if (winner){
+            if (playerId === 'X'){
+                winningDisplay("Player X has won",winnerCombination);
+                player1Points +=2;
+                document.querySelector('#player1').textContent = player1Points;
+                
+                return;
+                
+            }else {
+                winningDisplay("Player O has won",winnerCombination);
+                player2Points +=2;
+                document.querySelector('#player2').textContent = player2Points;
+
+                return;
+                
+            }
+
+        } 
+
+        if(drawResult){
+            playerTurn.textContent = 'The match is a draw';
+            player1Points +=1;
+            document.querySelector('#player1').textContent = player1Points;
+            player2Points +=1;
+            document.querySelector('#player2').textContent = player2Points;
+            return;
+        }
+
+
+
+        
+    }
+
+    //f-ja kojom resetujemo sve vrednosti polja na pocetne
+   let reset = function (){
+    
+    for(var i=0; i < columns.length; i++){
+        columns[i].textContent = '';
+    }
+
+    if (playerId === 'X'){
+
+        for(let i=0; i<winnerCombination.length;i++){
+            let index = winnerCombination[i];
+            let winningColumn = document.getElementById(index);
+            winningColumn.classList.remove('winning-class');
+        }
+        playerTurn.textContent = "It is O's turn";
+        currentPlayer = 1;
+    }else {
+
+        for(let i=0; i<winnerCombination.length;i++){
+            let index = winnerCombination[i];
+            let winningColumn = document.getElementById(index);
+            winningColumn.classList.remove('winning-class');
+        }
+        playerTurn.textContent = "It is X's turn";
+        currentPlayer = 0;
+    }
+
+    beginningStatus = ['','','','','','','','',''];
+    winnerCombination = [];
+    playerMoves = [];
+    winner = false;
+    drawResult = false;
+
+    //vracam event listener
+    for(var i=0; i < columns.length; i++){
+        columns[i].addEventListener('click',beginningOfThePlay);
+        }
+    
+
+   };
+
+   //f-ja za prikaz informacija o pobedniku
+    let winningDisplay = function (string,playerIdMoves){
+        playerTurn.textContent = string;
+                for(let i=0; i<playerIdMoves.length;i++){
+                    let index = playerIdMoves[i];
+                    let winningColumn = document.getElementById(index);
+                    winningColumn.classList.add('winning-class');
+                }
+    }
+
+    //f-ja za brisanje event listenera sa polja
+    let removeEventListener = function (){
+        if(winner){
+            for(var i=0; i < columns.length; i++){
+                columns[i].removeEventListener('click', beginningOfThePlay);
+            }
+        }
+    }
+    
+    button.addEventListener('click', reset);
 }
+
+main();
