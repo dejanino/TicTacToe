@@ -13,7 +13,21 @@ let main = function (){
     let player1Points = 0;//poeni igraca 1
     let player2Points = 0;//poeni igraca 2
     let winnerCombination = [];//promenljiva koja ukazuje na pobednicku kombinaciju
-    
+
+    // MOZES DA NAPRAVIS FUNKCIJU KOJA CE DA SE POZIVA NA SAMOM POCETKU
+    // I KOJA CE DA PROVERI DA LI POSTOJI NESTO U localStorage, AKO NE 
+    // POSTOJI, NAPRAVIS JEDAN OBJEKAT 
+    // let result = {
+    //      player1,
+    //      player2
+    // }
+    // PA ONDA NJEGA STAVIS U localStorage (localStorage.setItem('result', JSON.stringify(result)))
+    // A AKO POSTOJI ONDA PROCITAS REZULTAT I POSTAVIS VREDNOSTI OVIM TVOJIM PROMENLJIVAMA
+    // const obj = localStorage.getItem('result');
+    // const result = JSON.parse(obj);
+
+    // RAZMISLI JOS GDE BI TREBAO DA SETUJES TRENUTNI REZULTAT (SNIMIS U localStorage)
+
     //pocetne vrednosti svih polja
     let beginningStatus = [
         "", "", "",
@@ -101,14 +115,14 @@ let main = function (){
                 winningDisplay("Player X has won",winnerCombination);
                 player1Points +=2;
                 document.querySelector('#player1').textContent = player1Points;
-                
+                // ovde mozes da setujes trenutni rezultat u localStorage
                 return;
                 
             }else {
                 winningDisplay("Player O has won",winnerCombination);
                 player2Points +=2;
                 document.querySelector('#player2').textContent = player2Points;
-
+                // ovde mozes da setujes trenutni rezultat u localStorage
                 return;
                 
             }
@@ -121,6 +135,7 @@ let main = function (){
             document.querySelector('#player1').textContent = player1Points;
             player2Points +=1;
             document.querySelector('#player2').textContent = player2Points;
+            // ovde mozes da setujes trenutni rezultat u localStorage
             return;
         }
 
