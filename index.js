@@ -1,5 +1,5 @@
-import { LocalStorageObject } from 'LocalStorageModule.js';
-import { LocalStorageObjectSecond } from 'LocalStorageModule.js';
+// import { LocalStorageObject } from 'LocalStorageModule.js';
+// import { LocalStorageObjectSecond } from 'LocalStorageModule.js';
  
 window.addEventListener('load', app);
 
@@ -31,6 +31,8 @@ function app() {
 function addPlayers(event) {
   event.preventDefault();
 
+  let list = LocalStorageObject.loadResult();
+
   if (this.player1.value === '' || this.player2.value === '') {
     alert('You Must Enter a Name for Each Field');
     return;
@@ -43,7 +45,12 @@ function addPlayers(event) {
 
   playerX.name = this.player1.value;
   playerY.name = this.player2.value;
+
+  //pozovi funkciju za snimanje igraca 
+  LocalStorageObject.savePlayers(playerX.name, playerY.name);
+
   buildBoard();
+
 }
 
 
@@ -71,6 +78,9 @@ function buildBoard() {
   onResize();
   addCellClickListener();
   changeBoardHeaderNames();
+
+  //pozovi funkciju koja ce da popuni tablu sa rezultatom
+  LocalStorageObject.populateResultBoard();
 }
 
 // CELL CLICK EVENT FOR PLAYER TO ATTEMPT TO MAKE MOVE
@@ -155,17 +165,27 @@ function isWinner() {
           <div class="u-r-winner">You are our winner!</div>
         `;
         winner = true;
+
+        //ove zovemo funkciju koja ce da sacuva rezultat u local storage
+        // saljemo joj parametar/index za playerX, a to je 0
+        LocalStorageObject.saveResult(0)
+        
         removeCellClickListener();
-        return true;
       } else {
         currentPlayerText.innerHTML = `
           <div class="congratulations">Congratulations ${playerY.name}</div>
           <div class="u-r-winner">You are our winner!</div>
         `;
         winner = true;
+
+        //ove zovemo funkciju koja ce da sacuva rezultat u local storage
+        // saljemo joj parametar/index za playerY, a to je 1
+        LocalStorageObject.saveResult(1)
+        
         removeCellClickListener();
-        return true;
       }
+      // ucitavamo trenutni rezultat
+      LocalStorageObject.populateResultBoard();
     }
   });
 
@@ -228,4 +248,52 @@ function removeCellClickListener() {
   allCells.forEach( cell => {
     cell.removeEventListener('click', makeMove);
   });
+}
+
+const LocalStorageObject = {
+  // ovde cuvamo imena igraca i stavljamo im po 0 poena za pocetak
+  savePlayers: function(playerX, playerY) {
+    const list = [
+      {
+        name: playerX,
+        points: 0
+      },
+      {
+        name: playerY,
+        points: 0
+      }
+    ]
+    const objectToString = JSON.stringify(list);
+    localStorage.setItem('list', objectToString);
+  },
+  saveResult: function(index) {
+    // prvo ucitamo postojecu listu
+    let list = this.loadResult();
+
+    //nadjemo odgovarajuceg takmicara koji je pobedio preko indeksa
+    // i povecamo mu broj pobeda za 1
+    list[index].points += 1
+
+    //pa onda to novo stanje snimimo
+    const objectToString = JSON.stringify(list);
+    localStorage.setItem('list', objectToString);
+  },
+  loadResult: function() {
+      const listAsString = localStorage.getItem('list');
+      const converted = JSON.parse(listAsString);
+      return converted;
+  },
+  populateResultBoard: function() {
+    let list = this.loadResult();
+    
+    let playerXname = document.getElementById("playerXname");
+    let playerXpoints = document.getElementById("playerXpoints");
+    let playerYname = document.getElementById("playerYname");
+    let playerYpoints = document.getElementById("playerYpoints");
+
+    playerXname.innerText = list[0].name;
+    playerXpoints.innerText = list[0].points;
+    playerYname.innerText = list[1].name;
+    playerYpoints.innerText = list[1].points;
+  }
 }
