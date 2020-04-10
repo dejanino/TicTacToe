@@ -118,7 +118,11 @@ function makeMove(event) {
 
 function checkIfTie() {
   if (turn > 7) {
-    alert('game over a tie')
+    //alert('game over a tie')
+    LocalStorageObject.saveResult();
+    removeCellClickListener();
+    // ucitavamo trenutni rezultat
+    LocalStorageObject.populateResultBoard();
   }
 }
 
@@ -272,8 +276,15 @@ const LocalStorageObject = {
 
     //nadjemo odgovarajuceg takmicara koji je pobedio preko indeksa
     // i povecamo mu broj pobeda za 1
-    list[index].points += 1
-
+    debugger
+    if (index == 0 || index == 1){
+      list[index].points += 2
+    }
+    else {
+      list[0].points += 1;
+      list[1].points += 1;
+    }
+    
     //pa onda to novo stanje snimimo
     const objectToString = JSON.stringify(list);
     localStorage.setItem('list', objectToString);
